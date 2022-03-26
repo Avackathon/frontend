@@ -5,11 +5,21 @@ import App from "./App"
 import reportWebVitals from "./reportWebVitals"
 import { StoreProvider } from "easy-peasy"
 import { rootStore } from "./store"
+import { BrowserRouter, Route, Routes } from "react-router-dom"
+import Subnets from "./pages/Subnets"
+import VMs from "./pages/VMs"
 
 ReactDOM.render(
   <React.StrictMode>
     <StoreProvider store={rootStore}>
-      <App />
+      <BrowserRouter>
+        <Routes>
+          <Route path="/" element={<App />}>
+            <Route index element={<Subnets />} />
+            <Route path="vms" element={<VMs />} />
+          </Route>
+        </Routes>
+      </BrowserRouter>
     </StoreProvider>
   </React.StrictMode>,
   document.getElementById("root")

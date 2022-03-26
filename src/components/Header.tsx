@@ -1,6 +1,7 @@
 import { Disclosure, Menu, Transition } from "@headlessui/react"
 import { BellIcon, MenuIcon, XIcon } from "@heroicons/react/outline"
 import { Fragment } from "react"
+import { Outlet } from "react-router-dom"
 import Subnets from "../pages/Subnets"
 
 const user = {
@@ -207,8 +208,7 @@ const Header = () => {
         </header>
         <main>
           <div className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
-            {/* /End replace */}
-            <Subnets />
+            <Outlet />
           </div>
         </main>
       </div>

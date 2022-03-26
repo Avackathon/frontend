@@ -3,6 +3,9 @@ import { useEffect } from "react"
 import Paginator from "../components/Paginator"
 import "../index.css"
 import { RootModel } from "../store"
+import { CheckCircleIcon } from "@heroicons/react/solid"
+import SubnetListElement from "../components/SubnetListElement"
+import WalletConnect from "../components/WalletConnect"
 
 const Subnets = () => {
   const fetchSubnets = useStoreActions(
@@ -18,35 +21,41 @@ const Subnets = () => {
   }, [])
 
   return (
-    <div>
+    <div className="">
       <p>subnets</p>
+      <WalletConnect />
       {subnets.slice(0, 10).map((sub) => {
         return (
-          <div className="container mx-auto px-4">
-            <div
-              className=" rounded-lg bg-zinc-900  my-1 p-5 text-zinc-300"
-              key={sub.id}
-            >
-              <p className="font-bold ">{sub.id}</p>
-              {sub.name ? (
-                <p>
-                  {sub.name} - {sub.description}
-                </p>
-              ) : undefined}
-              <p>control key 1: {sub.controlKeys[0]}</p>
-              <h4>blockchains</h4>
-              {blockchains
-                .filter((el) => el.subnetId === sub.id)
-                .map((bc) => {
-                  return (
-                    <div>
-                      <p>{bc.name}</p>
-                      <p>VM : {bc.vmId}</p>
-                    </div>
-                  )
-                })}
-            </div>
-          </div>
+          //   <div className="container">
+          //     <div
+          //       className=" rounded-lg bg-zinc-900   my-1 p-5 text-zinc-300"
+          //       key={sub.id}
+          //     >
+          //       <p className="font-bold ">{sub.id}</p>
+
+          //       {sub.name ? (
+          //         <>
+          //           <p>
+          //             {sub.name} - {sub.description}
+          //           </p>
+          //           <CheckCircleIcon className="h-5 w-5" aria-hidden="true" />
+          //         </>
+          //       ) : undefined}
+          //       <p>control key 1: {sub.controlKeys[0]}</p>
+          //       <h4>blockchains</h4>
+          //       {blockchains
+          //         .filter((el) => el.subnetId === sub.id)
+          //         .map((bc) => {
+          //           return (
+          //             <div>
+          //               <p>{bc.name}</p>
+          //               <p>VM : {bc.vmId}</p>
+          //             </div>
+          //           )
+          //         })}
+          //     </div>
+          //   </div>
+          <SubnetListElement {...sub} />
         )
       })}
       <Paginator />
