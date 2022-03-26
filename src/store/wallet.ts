@@ -1,5 +1,6 @@
 import { action, Action, thunk, Thunk } from "easy-peasy"
 import Web3 from "web3"
+import { RootModel } from "."
 import { subNavABI } from "../utils/abi/SubNav"
 import {
   RPC_URL,
@@ -24,8 +25,7 @@ export type WalletModel = WalletState & {
   setRightChain: Action<WalletModel, boolean>
   setEnrichedUserInfos: Action<WalletModel, EnrichedUserInfos>
   connectWallet: Thunk<WalletModel>
-  registerUser: Thunk<WalletModel>
-  claimSubnet: Thunk<WalletModel, { subnetId: string }>
+  registerUser: Thunk<WalletModel, EnrichedUserInfos>
 }
 declare let window: any
 const web3 = new Web3(window.ethereum)
@@ -51,8 +51,9 @@ export const initialWalletModel: WalletModel = {
   connectWallet: thunk(async (actions, payload, helpers) => {
     const state = helpers.getState()
     if (
-      (window.ethereum && state.connectionStatus === Status.UNDEFINED) ||
-      Status.FAILED
+      window.ethereum &&
+      (state.connectionStatus === Status.UNDEFINED ||
+        state.connectionStatus === Status.FAILED)
     ) {
       actions.setConnectionStatus(Status.PENDING)
       try {
@@ -68,6 +69,7 @@ export const initialWalletModel: WalletModel = {
           ? new Web3(window.ethereum)
           : new Web3(new Web3.providers.HttpProvider(RPC_URL))
 
+        console.log("ADDRESS: ", address)
         actions.setWalletAddress(address)
         actions.setConnectionStatus(Status.SUCCESS)
         window.ethereum.on("chainChanged", (chainId: string) => {
@@ -76,11 +78,13 @@ export const initialWalletModel: WalletModel = {
             ? new Web3(window.ethereum)
             : new Web3(new Web3.providers.HttpProvider(RPC_URL))
 
+          console.log("CHAIN CHANGED: ")
           //Change chain
         })
 
         window.ethereum.on("accountsChanged", (accounts: Array<string>) => {
           const address = accounts[0]
+          console.log("ACCOUNT CHANGED: ", address)
           if (!address) {
             actions.setConnectionStatus(Status.UNDEFINED)
             return
@@ -99,6 +103,15 @@ export const initialWalletModel: WalletModel = {
       return
     }
   }),
-  registerUser: thunk((actions, payload, helpers) => {}),
-  claimSubnet: thunk((actions, payload, helpers) => {}),
+  registerUser: thunk(async (actions, payload, helpers) => {
+    const state = helpers.getState()
+    actions.setEnrichedUserInfos(payload)
+    try {
+      await subnetNavContract.methods
+        .registerUser(payload.email, payload.twitterHandle)
+        .send({ from: state.address })
+    } catch (e) {
+      helpers.fail((e as Error).message)
+    }
+  }),
 }

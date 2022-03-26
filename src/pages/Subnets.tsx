@@ -6,6 +6,7 @@ import { RootModel } from "../store"
 import { CheckCircleIcon } from "@heroicons/react/solid"
 import SubnetListElement from "../components/SubnetListElement"
 import WalletConnect from "../components/WalletConnect"
+import RegisterModal from "../components/RegisterModal"
 
 const Subnets = () => {
   const fetchSubnets = useStoreActions(
@@ -24,6 +25,7 @@ const Subnets = () => {
     <div className="">
       <p>subnets</p>
       <WalletConnect />
+      <RegisterModal />
       {subnets.slice(0, 10).map((sub) => {
         return (
           //   <div className="container">

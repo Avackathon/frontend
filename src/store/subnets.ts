@@ -47,6 +47,7 @@ export type SubnetsModel = SubnetsState & {
   fetchSubnets: Thunk<SubnetsModel>
   fetchBlockchains: Thunk<SubnetsModel>
   fetchSubnetInfos: Thunk<SubnetsModel, Subnet>
+  claimSubnet: Thunk<SubnetsModel, { subnetId: string }>
 }
 
 export const initialSubnetsModel: SubnetsModel = {
@@ -158,6 +159,9 @@ export const initialSubnetsModel: SubnetsModel = {
       } as Subnet
       actions.setSubnet(enrichedSubnet)
     }
-    console.log(res)
+    // console.log(res)
+  }),
+  claimSubnet: thunk((actions, payload, helpers) => {
+    console.log("Claiming subnet ", payload)
   }),
 }

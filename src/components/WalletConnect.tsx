@@ -11,7 +11,8 @@ const WalletConnect = () => {
 
   return (
     <div className="bg-black-100 text-slate-50">
-      {walletState.connectionStatus === (Status.UNDEFINED || Status.FAILED) ? (
+      {walletState.connectionStatus === Status.UNDEFINED ||
+      walletState.connectionStatus === Status.FAILED ? (
         <p
           onClick={() => {
             walletActions.connectWallet()
@@ -22,7 +23,7 @@ const WalletConnect = () => {
       ) : walletState.connectionStatus === Status.PENDING ? (
         <p>PENDING CONNECTION</p>
       ) : (
-        <p className="ext-slate-50">{walletState.address}</p>
+        <p className="ext-slate-50">{walletState.address} asasas</p>
       )}
     </div>
   )

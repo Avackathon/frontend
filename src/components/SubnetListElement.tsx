@@ -1,6 +1,7 @@
-import { CheckCircleIcon } from "@heroicons/react/outline"
-import React from "react"
-import { Subnet } from "../store/subnets"
+import { CheckCircleIcon, KeyIcon } from "@heroicons/react/outline"
+import { Actions, useStoreActions } from "easy-peasy"
+import { RootModel } from "../store"
+import { Subnet, SubnetsModel } from "../store/subnets"
 
 const SubnetHeader = (props: Subnet) => {
   if (props.name) {
@@ -15,9 +16,24 @@ const SubnetHeader = (props: Subnet) => {
     return (
       <div>
         <p className="font-bold">{props.id}</p>
+        <ClaimButton id={props.id} />
       </div>
     )
   }
+}
+const ClaimButton = (props: { id: string }) => {
+  const claimAction = useStoreActions(
+    (actions: Actions<RootModel>) => actions.subnets.claimSubnet
+  )
+  return (
+    <div
+      onClick={() => {
+        claimAction({ subnetId: props.id })
+      }}
+    >
+      <KeyIcon className="h-5 w-5"></KeyIcon>
+    </div>
+  )
 }
 const SubnetListElement = (props: Subnet) => {
   return (
