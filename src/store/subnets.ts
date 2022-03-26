@@ -4,6 +4,7 @@ import Web3 from "web3"
 import { Status } from "../utils/types"
 import { SUBNAV_CONTRACT_ADDRESS } from "../utils/chain_infos"
 import { subNavABI } from "../utils/abi/SubNav"
+import { RootModel } from "."
 
 declare let window: any
 const web3 = new Web3(window.ethereum)
@@ -47,7 +48,10 @@ export type SubnetsModel = SubnetsState & {
   fetchSubnets: Thunk<SubnetsModel>
   fetchBlockchains: Thunk<SubnetsModel>
   fetchSubnetInfos: Thunk<SubnetsModel, Subnet>
-  claimSubnet: Thunk<SubnetsModel, { subnetId: string }>
+  claimSubnet: Thunk<
+    SubnetsModel,
+    { subnetId: string; name: string; description: string }
+  >
 }
 
 export const initialSubnetsModel: SubnetsModel = {
@@ -161,7 +165,25 @@ export const initialSubnetsModel: SubnetsModel = {
     }
     // console.log(res)
   }),
-  claimSubnet: thunk((actions, payload, helpers) => {
+  claimSubnet: thunk(async (actions, payload, helpers) => {
     console.log("Claiming subnet ", payload)
+    const state = helpers.getStoreState() as RootModel
+    if (!state.wallet.address) {
+      helpers.fail("No wallet address")
+      return
+    }
+    try {
+      await subnetNavContract.methods
+        .registerSubnet(
+          payload.subnetId,
+          payload.name,
+          payload.description,
+          state.wallet.address
+        )
+        .send({ from: state.wallet.address })
+    } catch (e) {
+      console.log((e as Error).message)
+      helpers.fail((e as Error).message)
+    }
   }),
 }

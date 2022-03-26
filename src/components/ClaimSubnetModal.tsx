@@ -1,24 +1,26 @@
 import { Dialog, Transition } from "@headlessui/react"
+import { Actions, useStoreActions } from "easy-peasy"
 import { Fragment, useState } from "react"
+import { RootModel } from "../store"
 
-const ClaimSubnetModal = () => {
-  let [isOpen, setIsOpen] = useState(true)
-
-  function closeModal() {
-    setIsOpen(false)
-  }
-
-  function openModal() {
-    setIsOpen(true)
-  }
-
+type Props = {
+  name: string
+  open: boolean
+  onClose: () => void
+}
+const ClaimSubnetModal = (props: Props) => {
+  const [name, setName] = useState("")
+  const [description, setDescription] = useState("")
+  const claim = useStoreActions(
+    (actions: Actions<RootModel>) => actions.subnets.claimSubnet
+  )
   return (
     <>
-      <Transition appear show={isOpen} as={Fragment}>
+      <Transition appear show={props.open} as={Fragment}>
         <Dialog
           as="div"
           className="fixed inset-0 z-10 overflow-y-auto"
-          onClose={closeModal}
+          onClose={props.onClose}
         >
           <div className="min-h-screen px-4 text-center">
             <Transition.Child
@@ -54,16 +56,27 @@ const ClaimSubnetModal = () => {
                   as="h3"
                   className="text-lg font-medium leading-6 text-gray-900"
                 >
-                  Claim/Update Subnet information
+                  Claim/Update Subnet {props.name} information
                 </Dialog.Title>
                 <div className="mt-2">
                   <p className="text-sm text-gray-500">
                     Register your user to claim/update subnet infos
                   </p>
-                  <input className="bg-pink-300" placeholder="name" />
+                  <input
+                    className="bg-pink-300"
+                    value={name}
+                    placeholder="name"
+                    onChange={(evt) => {
+                      setName(evt.target.value)
+                    }}
+                  />
                   <input
                     className="bg-pink-200 mx-3"
                     placeholder="Description"
+                    value={description}
+                    onChange={(evt) => {
+                      setDescription(evt.target.value)
+                    }}
                   />
                 </div>
 
@@ -71,7 +84,14 @@ const ClaimSubnetModal = () => {
                   <button
                     type="button"
                     className="inline-flex justify-center px-4 py-2 text-sm font-medium text-blue-900 bg-blue-100 border border-transparent rounded-md hover:bg-blue-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-blue-500"
-                    onClick={closeModal}
+                    onClick={() => {
+                      props.onClose()
+                      claim({
+                        subnetId: props.name,
+                        name: name,
+                        description: description,
+                      })
+                    }}
                   >
                     Register
                   </button>

@@ -1,7 +1,9 @@
 import { CheckCircleIcon, KeyIcon } from "@heroicons/react/outline"
 import { Actions, useStoreActions } from "easy-peasy"
+import { useState } from "react"
 import { RootModel } from "../store"
-import { Subnet, SubnetsModel } from "../store/subnets"
+import { Subnet } from "../store/subnets"
+import ClaimSubnetModal from "./ClaimSubnetModal"
 
 const SubnetHeader = (props: Subnet) => {
   if (props.name) {
@@ -22,15 +24,24 @@ const SubnetHeader = (props: Subnet) => {
   }
 }
 const ClaimButton = (props: { id: string }) => {
+  const [claimModalOpened, setClaimModalOpened] = useState(false)
   const claimAction = useStoreActions(
     (actions: Actions<RootModel>) => actions.subnets.claimSubnet
   )
   return (
     <div
       onClick={() => {
-        claimAction({ subnetId: props.id })
+        setClaimModalOpened(true)
+        // claimAction({ subnetId: props.id })
       }}
     >
+      <ClaimSubnetModal
+        name={props.id}
+        open={claimModalOpened}
+        onClose={() => {
+          setClaimModalOpened(false)
+        }}
+      />
       <KeyIcon className="h-5 w-5"></KeyIcon>
     </div>
   )

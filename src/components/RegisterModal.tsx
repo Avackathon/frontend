@@ -1,24 +1,25 @@
 import { Dialog, Transition } from "@headlessui/react"
+import { Actions, useStoreActions } from "easy-peasy"
 import { Fragment, useState } from "react"
+import { RootModel } from "../store"
 
-const RegisterModal = () => {
-  let [isOpen, setIsOpen] = useState(true)
-
-  function closeModal() {
-    setIsOpen(false)
-  }
-
-  function openModal() {
-    setIsOpen(true)
-  }
-
+type Props = {
+  open: boolean
+  onClose: () => void
+}
+const RegisterModal = (props: Props) => {
+  const [email, setEmail] = useState("")
+  const [twitterHandle, setTwitterHandle] = useState("")
+  const register = useStoreActions(
+    (actions: Actions<RootModel>) => actions.wallet.registerUser
+  )
   return (
     <>
-      <Transition appear show={isOpen} as={Fragment}>
+      <Transition appear show={props.open} as={Fragment}>
         <Dialog
           as="div"
           className="fixed inset-0 z-10 overflow-y-auto"
-          onClose={closeModal}
+          onClose={props.onClose}
         >
           <div className="min-h-screen px-4 text-center">
             <Transition.Child
@@ -62,11 +63,15 @@ const RegisterModal = () => {
                   </p>
                   <input
                     type={"email"}
+                    value={email}
                     className="bg-pink-300"
+                    onChange={(evt) => setEmail(evt.target.value)}
                     placeholder="email"
                   />
                   <input
                     type={"text"}
+                    value={twitterHandle}
+                    onChange={(evt) => setTwitterHandle(evt.target.value)}
                     className="bg-pink-200 mx-3"
                     placeholder="Twitter Handle"
                   />
@@ -76,7 +81,10 @@ const RegisterModal = () => {
                   <button
                     type="button"
                     className="inline-flex justify-center px-4 py-2 text-sm font-medium text-blue-900 bg-blue-100 border border-transparent rounded-md hover:bg-blue-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-blue-500"
-                    onClick={closeModal}
+                    onClick={() => {
+                      register({ email: email, twitterHandle: twitterHandle })
+                      props.onClose()
+                    }}
                   >
                     Register
                   </button>
