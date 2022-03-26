@@ -173,13 +173,17 @@ export const initialSubnetsModel: SubnetsModel = {
       return
     }
     try {
+      const res = await subnetNavContract.methods
+        .subnetOwners(payload.subnetId)
+        .call()
+      console.log("SUBNET OWNER: ", res)
+      if (res !== state.wallet.address) {
+        await subnetNavContract.methods
+          .requestSubnetOwnership(payload.subnetId)
+          .send({ from: state.wallet.address })
+      }
       await subnetNavContract.methods
-        .registerSubnet(
-          payload.subnetId,
-          payload.name,
-          payload.description,
-          state.wallet.address
-        )
+        .registerSubnet(payload.subnetId, payload.name, payload.description)
         .send({ from: state.wallet.address })
     } catch (e) {
       console.log((e as Error).message)

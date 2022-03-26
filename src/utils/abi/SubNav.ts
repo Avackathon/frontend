@@ -1,5 +1,30 @@
 export const subNavABI = [
   {
+    anonymous: false,
+    inputs: [
+      {
+        indexed: true,
+        internalType: "address",
+        name: "ownerAddress",
+        type: "address",
+      },
+      {
+        indexed: false,
+        internalType: "string",
+        name: "subnetID",
+        type: "string",
+      },
+      {
+        indexed: false,
+        internalType: "string",
+        name: "status",
+        type: "string",
+      },
+    ],
+    name: "SubnetOwnershipRequest",
+    type: "event",
+  },
+  {
     inputs: [
       {
         internalType: "string",
@@ -20,6 +45,37 @@ export const subNavABI = [
   {
     inputs: [
       {
+        internalType: "address",
+        name: "ownerAddress",
+        type: "address",
+      },
+      {
+        internalType: "string",
+        name: "subnetID",
+        type: "string",
+      },
+    ],
+    name: "denySubnetOwnership",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [],
+    name: "getSubnetIDs",
+    outputs: [
+      {
+        internalType: "string[]",
+        name: "",
+        type: "string[]",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
         internalType: "string",
         name: "subnetID",
         type: "string",
@@ -32,11 +88,6 @@ export const subNavABI = [
       {
         internalType: "string",
         name: "description",
-        type: "string",
-      },
-      {
-        internalType: "string",
-        name: "owner",
         type: "string",
       },
     ],
@@ -67,6 +118,38 @@ export const subNavABI = [
     inputs: [
       {
         internalType: "string",
+        name: "subnetID",
+        type: "string",
+      },
+    ],
+    name: "requestSubnetOwnership",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "string",
+        name: "",
+        type: "string",
+      },
+    ],
+    name: "subnetOwners",
+    outputs: [
+      {
+        internalType: "address",
+        name: "",
+        type: "address",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "string",
         name: "",
         type: "string",
       },
@@ -84,9 +167,9 @@ export const subNavABI = [
         type: "string",
       },
       {
-        internalType: "string",
+        internalType: "address",
         name: "owner",
-        type: "string",
+        type: "address",
       },
     ],
     stateMutability: "view",
@@ -114,6 +197,24 @@ export const subNavABI = [
       },
     ],
     stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "string",
+        name: "subnetID",
+        type: "string",
+      },
+      {
+        internalType: "address",
+        name: "ownerAddress",
+        type: "address",
+      },
+    ],
+    name: "validateSubnetOwnership",
+    outputs: [],
+    stateMutability: "nonpayable",
     type: "function",
   },
 ]
