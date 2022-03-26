@@ -1,5 +1,6 @@
 import { Actions, State, useStoreActions, useStoreState } from "easy-peasy"
 import { useEffect, useMemo, useState } from "react"
+import FilterBar from "../components/FilterBar"
 import Paginator from "../components/Paginator"
 import RegisterModal from "../components/RegisterModal"
 import SubnetListElement from "../components/SubnetListElement"
@@ -46,7 +47,7 @@ const Subnets = () => {
           (el) =>
             blockchains.findIndex(
               (bc) => bc.subnetId === el.id && bc.vmId === EVMID
-            ) !== 1
+            ) !== -1
         )
       : filter1
     const filter3 = filterSpacesVM
@@ -54,7 +55,7 @@ const Subnets = () => {
           (el) =>
             blockchains.findIndex(
               (bc) => bc.subnetId === el.id && bc.vmId === SPACESVMID
-            ) !== 1
+            ) !== -1
         )
       : filter2
     const filter4 = filterTimestampVM
@@ -62,7 +63,7 @@ const Subnets = () => {
           (el) =>
             blockchains.findIndex(
               (bc) => bc.subnetId === el.id && bc.vmId === TIMESTAMPVMID
-            ) !== 1
+            ) !== -1
         )
       : filter3
 
@@ -82,42 +83,19 @@ const Subnets = () => {
   }, [])
 
   return (
-    <div className="">
-      <div className="h-10 bg-cyan-300">
-        <span
-          onClick={() => {
-            console.log("filter")
-            setFilterClaimed(!filterClaimed)
-          }}
-        >
-          filter Claimed subnets
-        </span>
-        <span
-          onClick={() => {
-            setFilterEVM(!filterEVM)
-          }}
-        >
-          {" "}
-          EVM
-        </span>
-        <span
-          onClick={() => {
-            setFilterSpacesVM(!filterSpacesVM)
-          }}
-        >
-          SpacesVM
-        </span>
-        <span
-          onClick={() => {
-            setFilterTimestampVM(!filterTimestampVM)
-          }}
-        >
-          TimestampVM
-        </span>
-      </div>
-      <WalletConnect />
-      <p onClick={() => setRegisterUserModalOpen(true)}>Register User</p>
-      <p onClick={() => setClaimSubnetModalOpen(true)}> Claim subnet</p>
+    <div className="bg-slate-100 mx-auto ">
+      <FilterBar
+        EVM={filterEVM}
+        timestampVM={filterTimestampVM}
+        spacesVM={filterSpacesVM}
+        claimed={filterClaimed}
+        setEVM={setFilterEVM}
+        setSpaces={setFilterSpacesVM}
+        setTimestamp={setFilterTimestampVM}
+        setClaimed={setFilterClaimed}
+      />
+
+      {/* <p onClick={() => setRegisterUserModalOpen(true)}>Register User</p> */}
       <RegisterModal
         open={registerUserModalOpen}
         onClose={() => {

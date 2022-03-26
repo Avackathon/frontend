@@ -74,7 +74,6 @@ export const initialWalletModel: WalletModel = {
         console.log("ADDRESS: ", address)
         actions.setWalletAddress(address)
         actions.setConnectionStatus(Status.SUCCESS)
-        actions.getFaucetTokens(address)
         window.ethereum.on("chainChanged", (chainId: string) => {
           const rightChainId = parseInt(chainId, 16) === SUPPORTED_CHAIN_ID
 

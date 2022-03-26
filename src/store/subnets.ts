@@ -156,10 +156,15 @@ export const initialSubnetsModel: SubnetsModel = {
   fetchSubnetInfos: thunk(async (actions, payload, helpers) => {
     const res = await subnetNavContract.methods.subnets(payload.id).call()
     if (res[0] !== "") {
+      const user = await subnetNavContract.methods.users(res["owner"]).call()
       const enrichedSubnet = {
         ...payload,
         name: res["name"],
         description: res["description"],
+        owner: {
+          mail: user["mail"],
+          twitterHandle: user["twitterHandle"],
+        },
       } as Subnet
       actions.setSubnet(enrichedSubnet)
     }
