@@ -2,9 +2,7 @@ import { Actions, State, useStoreActions, useStoreState } from "easy-peasy"
 import { useEffect, useMemo, useState } from "react"
 import FilterBar from "../components/FilterBar"
 import Paginator from "../components/Paginator"
-import RegisterModal from "../components/RegisterModal"
 import SubnetListElement from "../components/SubnetListElement"
-import WalletConnect from "../components/WalletConnect"
 import "../index.css"
 import { RootModel } from "../store"
 import { EVMID, SPACESVMID, TIMESTAMPVMID } from "../utils/blockchains"
@@ -21,6 +19,7 @@ const Subnets = () => {
   useEffect(() => {
     walletActions.addNewNetwork()
   }, [walletState, walletActions])
+
   const fetchSubnets = useStoreActions(
     (actions: Actions<RootModel>) => actions.subnets.fetchSubnets
   )
@@ -29,8 +28,6 @@ const Subnets = () => {
     (state: RootModel) => state.subnets.blockchains
   )
 
-  const [registerUserModalOpen, setRegisterUserModalOpen] = useState(false)
-  const [claimSubnetModalOpen, setClaimSubnetModalOpen] = useState(false)
   const [startingItem, setStartingItem] = useState(0)
 
   const [filterClaimed, setFilterClaimed] = useState(false)
@@ -77,6 +74,9 @@ const Subnets = () => {
     filterTimestampVM,
   ])
 
+  useEffect(() => {
+    setStartingItem(0)
+  }, [filteredSubnets])
   const pageSize = 40
   useEffect(() => {
     fetchSubnets()
@@ -95,13 +95,6 @@ const Subnets = () => {
         setClaimed={setFilterClaimed}
       />
 
-      {/* <p onClick={() => setRegisterUserModalOpen(true)}>Register User</p> */}
-      <RegisterModal
-        open={registerUserModalOpen}
-        onClose={() => {
-          setRegisterUserModalOpen(false)
-        }}
-      />
       {filteredSubnets
         .slice(
           startingItem,

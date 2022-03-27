@@ -1,7 +1,8 @@
 import { Actions, State, useStoreActions, useStoreState } from "easy-peasy"
-import React from "react"
+import React, { useState } from "react"
 import { RootModel } from "../store"
 import avaxLogo from "../assets/logo.png"
+import RegisterModal from "./RegisterModal"
 
 const HeaderButton = (props: { name: string; active: boolean }) => {
   if (props.active) {
@@ -48,6 +49,7 @@ const WalletButton = () => {
 }
 
 const Header = () => {
+  const [registerUserModalOpen, setRegisterUserModalOpen] = useState(false)
   const getFaucet = useStoreActions(
     (actions: Actions<RootModel>) => actions.wallet.getFaucetTokens
   )
@@ -61,7 +63,7 @@ const Header = () => {
         <HeaderButton name="VMs" active={false} />
       </div>
       {walletState.address ? (
-        <div className="w-3/12 flex-initial flex items-center justify-end">
+        <div className="w-5/12 flex-initial flex items-center justify-end">
           <div
             onClick={() => {
               getFaucet(walletState.address ? walletState.address : "")
@@ -70,11 +72,26 @@ const Header = () => {
           >
             Get faucet tokens
           </div>
+          <div
+            onClick={() => {
+              setRegisterUserModalOpen(true)
+            }}
+            className="rounded text-sm px-3 py-3 mx-3 bg-slate-800"
+          >
+            Register user
+          </div>
         </div>
       ) : undefined}
       <div className="w-2/12 flex-initial flex items-center justify-end">
         <WalletButton />
       </div>
+
+      <RegisterModal
+        open={registerUserModalOpen}
+        onClose={() => {
+          setRegisterUserModalOpen(false)
+        }}
+      />
     </div>
   )
 }

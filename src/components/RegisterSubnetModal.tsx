@@ -4,15 +4,16 @@ import { Fragment, useState } from "react"
 import { RootModel } from "../store"
 
 type Props = {
-  name: string
+  id: string
   open: boolean
+  name?: string
   onClose: () => void
 }
-const ClaimSubnetModal = (props: Props) => {
+const RegisterSubnetModal = (props: Props) => {
   const [name, setName] = useState("")
   const [description, setDescription] = useState("")
-  const claim = useStoreActions(
-    (actions: Actions<RootModel>) => actions.subnets.claimSubnet
+  const register = useStoreActions(
+    (actions: Actions<RootModel>) => actions.subnets.registerSubnet
   )
   return (
     <>
@@ -56,22 +57,22 @@ const ClaimSubnetModal = (props: Props) => {
                   as="h3"
                   className="text-lg font-medium leading-6 text-gray-900"
                 >
-                  Claim/Update Subnet {props.name} information
+                  Register {props.name} information
                 </Dialog.Title>
                 <div className="mt-2">
                   <p className="text-sm text-gray-500">
-                    Register your user to claim/update subnet infos
+                    Update you subnet information
                   </p>
                   <input
-                    className="bg-pink-300"
+                    className="bg-slate-300"
                     value={name}
-                    placeholder="name"
+                    placeholder="Subnet name"
                     onChange={(evt) => {
                       setName(evt.target.value)
                     }}
                   />
                   <input
-                    className="bg-pink-200 mx-3"
+                    className="bg-slate-200 mx-3"
                     placeholder="Description"
                     value={description}
                     onChange={(evt) => {
@@ -86,14 +87,14 @@ const ClaimSubnetModal = (props: Props) => {
                     className="inline-flex justify-center px-4 py-2 text-sm font-medium text-blue-900 bg-blue-100 border border-transparent rounded-md hover:bg-blue-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-blue-500"
                     onClick={() => {
                       props.onClose()
-                      claim({
-                        subnetId: props.name,
+                      register({
+                        subnetId: props.id,
                         name: name,
                         description: description,
                       })
                     }}
                   >
-                    Register
+                    Update
                   </button>
                 </div>
               </div>
@@ -105,4 +106,4 @@ const ClaimSubnetModal = (props: Props) => {
   )
 }
 
-export default ClaimSubnetModal
+export default RegisterSubnetModal

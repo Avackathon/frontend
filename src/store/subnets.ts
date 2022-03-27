@@ -20,9 +20,9 @@ export type Blockchain = {
   vmId: string
 }
 export type User = {
-  mail: string
+  mail?: string
   twitterHandle?: string
-  cChainAddress?: string
+  cChainAddress: string
 }
 export type Subnet = {
   id: string
@@ -48,7 +48,8 @@ export type SubnetsModel = SubnetsState & {
   fetchSubnets: Thunk<SubnetsModel>
   fetchBlockchains: Thunk<SubnetsModel>
   fetchSubnetInfos: Thunk<SubnetsModel, Subnet>
-  claimSubnet: Thunk<
+  claimSubnet: Thunk<SubnetsModel, string>
+  registerSubnet: Thunk<
     SubnetsModel,
     { subnetId: string; name: string; description: string }
   >
@@ -164,9 +165,25 @@ export const initialSubnetsModel: SubnetsModel = {
         owner: {
           mail: user["mail"],
           twitterHandle: user["twitterHandle"],
+          cChainAddress: res["owner"],
         },
       } as Subnet
       actions.setSubnet(enrichedSubnet)
+    } else {
+      const owner = await subnetNavContract.methods
+        .subnetOwners(payload.id)
+        .call()
+      if (owner !== "0x0000000000000000000000000000000000000000") {
+        console.log(owner)
+        const enrichedSubnet = {
+          ...payload,
+
+          owner: {
+            cChainAddress: owner,
+          },
+        } as Subnet
+        actions.setSubnet(enrichedSubnet)
+      }
     }
     // console.log(res)
   }),
@@ -178,14 +195,27 @@ export const initialSubnetsModel: SubnetsModel = {
       return
     }
     try {
-      const res = await subnetNavContract.methods
-        .subnetOwners(payload.subnetId)
-        .call()
-      console.log("SUBNET OWNER: ", res)
-      if (res !== state.wallet.address) {
-        await subnetNavContract.methods
-          .requestSubnetOwnership(payload.subnetId)
-          .send({ from: state.wallet.address })
+      await subnetNavContract.methods
+        .requestSubnetOwnership(payload)
+        .send({ from: state.wallet.address })
+    } catch (e) {
+      console.log((e as Error).message)
+      helpers.fail((e as Error).message)
+    }
+  }),
+  registerSubnet: thunk(async (actions, payload, helpers) => {
+    console.log("registering subnet ", payload)
+    const state = helpers.getStoreState() as RootModel
+    if (!state.wallet.address) {
+      helpers.fail("No wallet address")
+      return
+    }
+    try {
+      if (
+        state.subnets.subnets.find((el) => el.id === payload.subnetId)?.owner
+          ?.cChainAddress !== state.wallet.address
+      ) {
+        helpers.fail("Not owner")
       }
       await subnetNavContract.methods
         .registerSubnet(payload.subnetId, payload.name, payload.description)

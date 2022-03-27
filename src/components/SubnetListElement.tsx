@@ -1,10 +1,10 @@
 import { CheckCircleIcon, KeyIcon } from "@heroicons/react/outline"
 import { Actions, State, useStoreActions, useStoreState } from "easy-peasy"
-import { useMemo, useState } from "react"
+import { useEffect, useMemo, useState } from "react"
 import { RootModel } from "../store"
 import { Blockchain, Subnet } from "../store/subnets"
 import { EVMID, SPACESVMID, TIMESTAMPVMID } from "../utils/blockchains"
-import ClaimSubnetModal from "./ClaimSubnetModal"
+import RegisterSubnetModal from "./RegisterSubnetModal"
 
 const VMIndicator = (props: { name: string }) => {
   if (props.name === "evm") {
@@ -21,11 +21,46 @@ const VMIndicator = (props: { name: string }) => {
     )
 }
 const SubnetHeader = (props: Subnet) => {
+  const walletState = useStoreState((state: State<RootModel>) => state.wallet)
+  const claim = useStoreActions(
+    (actions: Actions<RootModel>) => actions.subnets.claimSubnet
+  )
+  const registerSubnet = useStoreActions(
+    (actions: Actions<RootModel>) => actions.subnets.registerSubnet
+  )
+  const [modalOpen, setModalOpen] = useState(false)
   return (
     <div className="flex flex-row items-center h-10">
+      <RegisterSubnetModal
+        open={modalOpen}
+        id={props.id}
+        onClose={() => setModalOpen(false)}
+        name={props.name}
+      />
       <p className=" font-bold">{props.name ? props.name : props.id}</p>
-      {props.name ? (
-        <CheckCircleIcon className=" stroke-green-600 h-4 w-4 mx-2 " />
+      {props.owner?.cChainAddress ? (
+        <>
+          <CheckCircleIcon className=" stroke-green-600 h-4 w-4 mx-2 " />
+          {props.owner?.cChainAddress === walletState.address ? (
+            <div
+              onClick={() => {
+                setModalOpen(true)
+              }}
+              className=" text-sm rounded-xl  bg-slate-500 px-2 py-0.5 ml-6 text-white hover:bg-slate-400 "
+            >
+              Update Infos
+            </div>
+          ) : undefined}
+        </>
+      ) : walletState.address ? (
+        <div
+          onClick={() => {
+            claim(props.id)
+          }}
+          className=" text-sm rounded-xl  bg-slate-500 px-2 py-0.5 ml-6 text-white hover:bg-slate-400 "
+        >
+          claim
+        </div>
       ) : undefined}
     </div>
   )
@@ -37,8 +72,8 @@ const SubnetInfos = (props: Subnet) => {
         <p className="font-bold">Description</p>
         <p>{props.description}</p>
       </div>
-      {props.owner ? (
-        <div className=" w-3/12 mx-3">
+      {props.owner && props.owner.mail !== "" ? (
+        <div className=" w-8/12 mx-3">
           <p className="font-bold">Owner Infos</p>
           <p>C-Chain: {props.owner.cChainAddress}</p>
           <p>Mail: {props.owner.mail}</p>
@@ -67,29 +102,7 @@ const BlockchainsInfos = (props: { blockchains: Array<Blockchain> }) => {
     </div>
   )
 }
-const ClaimButton = (props: { id: string }) => {
-  const [claimModalOpened, setClaimModalOpened] = useState(false)
-  const claimAction = useStoreActions(
-    (actions: Actions<RootModel>) => actions.subnets.claimSubnet
-  )
-  return (
-    <div
-      onClick={() => {
-        setClaimModalOpened(true)
-        // claimAction({ subnetId: props.id })
-      }}
-    >
-      <ClaimSubnetModal
-        name={props.id}
-        open={claimModalOpened}
-        onClose={() => {
-          setClaimModalOpened(false)
-        }}
-      />
-      <KeyIcon className="h-5 w-5"></KeyIcon>
-    </div>
-  )
-}
+
 const SubnetListElement = (props: Subnet) => {
   const blockchains = useStoreState(
     (state: State<RootModel>) => state.subnets.blockchains

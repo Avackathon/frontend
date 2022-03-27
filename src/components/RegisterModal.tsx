@@ -59,12 +59,12 @@ const RegisterModal = (props: Props) => {
                 </Dialog.Title>
                 <div className="mt-2">
                   <p className="text-sm text-gray-500">
-                    Register your user to claim/update subnet infos
+                    Register your user information
                   </p>
                   <input
                     type={"email"}
                     value={email}
-                    className="bg-pink-300"
+                    className="bg-slate-300"
                     onChange={(evt) => setEmail(evt.target.value)}
                     placeholder="email"
                   />
@@ -72,7 +72,7 @@ const RegisterModal = (props: Props) => {
                     type={"text"}
                     value={twitterHandle}
                     onChange={(evt) => setTwitterHandle(evt.target.value)}
-                    className="bg-pink-200 mx-3"
+                    className="bg-slate-200 mx-3"
                     placeholder="Twitter Handle"
                   />
                 </div>
