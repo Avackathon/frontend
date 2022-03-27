@@ -4,6 +4,8 @@ This repository contains the frontend environment for the [SubNav](https://githu
 
 It was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
+A testnet version is available at [subnet.network](subnet.network)
+
 ## Quick start
 
 ### `yarn start`
